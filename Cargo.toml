@@ -1,9 +1,25 @@
 [package]
 name = "rsv"
-version = "0.1.0"
+version = "0.0.2"
 edition = "2021"
+authors = ["Maxi Saparov <max.saparov@gmail.com>"]
+description = "RSV reading and writing with Serde support"
+documentation = "https://docs.rs/rsv"
+homepage = "https://github.com/MostlyMax/rsv-rust"
+repository = "https://github.com/MostlyMax/rsv-rust"
+readme = "README.md"
+keywords = ["rsv", "parser", "serde"]
+license = "MIT"
+categories = ["encoding", "parser-implementations"]
+exclude = ["/.github"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[library]
 
 [dependencies]
+serde = { version = "1.0.195", features = ["derive"], optional = true }
+
+[dev-dependencies]
 serde = { version = "1.0.195", features = ["derive"] }
+
+[features]
+serde = ["dep:serde"]
