@@ -1,26 +1,23 @@
-use std::{iter, str::from_utf8};
+use std::str::from_utf8;
 
 use serde::{de::SeqAccess, Deserializer};
 
 use crate::error::{Error, ErrorKind};
+use crate::utils::{NULL_BYTE, VALUE_TERM_BYTE, ROW_TERM_BYTE};
 
 pub struct DeRecord<'de> {
     buf: &'de [u8],
 }
 
 impl<'de> DeRecord<'de> {
-    const NULL_BYTE: u8 = 0xFE;
-    const ROW_TERM_BYTE: u8 = 0xFD;
-    const VALUE_TERM_BYTE: u8 = 0xFF;
-
     pub(crate) fn from_ref(buf: &'de [u8]) -> Self {
         DeRecord { buf }
     }
 
     fn next_is_null(&mut self) -> Result<bool, Error> {
-        match self.buf[0] == Self::NULL_BYTE {
+        match self.buf[0] == NULL_BYTE {
             true => {
-                if self.buf[1] == Self::VALUE_TERM_BYTE {
+                if self.buf[1] == VALUE_TERM_BYTE {
                     self.buf = &self.buf[2..];
                     Ok(true)
                 } else {
@@ -35,8 +32,8 @@ impl<'de> DeRecord<'de> {
 
     fn next_value(&mut self) -> Result<Option<&str>, Error> {
         // Check if value is null byte
-        if self.buf[0] == Self::NULL_BYTE {
-            if self.buf[1] == Self::VALUE_TERM_BYTE {
+        if self.buf[0] == NULL_BYTE {
+            if self.buf[1] == VALUE_TERM_BYTE {
                 self.buf = &self.buf[2..];
                 return Ok(None);
             } else {
@@ -47,14 +44,14 @@ impl<'de> DeRecord<'de> {
         }
 
         // Check if value is empty string
-        if self.buf[0] == Self::VALUE_TERM_BYTE {
+        if self.buf[0] == VALUE_TERM_BYTE {
             self.buf = &self.buf[1..];
             return Ok(Some(""));
         }
 
         // Parse UTF-8 String
         for i in 1..self.buf.len() {
-            if self.buf[i] == Self::VALUE_TERM_BYTE {
+            if self.buf[i] == VALUE_TERM_BYTE {
                 let value = &self.buf[0..i];
                 self.buf = &self.buf[i + 1..];
 
@@ -351,7 +348,7 @@ impl<'a, 'de> SeqAccess<'de> for DeRecord<'de> {
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
         T: serde::de::DeserializeSeed<'de> {
-        if self.buf[0] == DeRecord::ROW_TERM_BYTE {
+        if self.buf[0] == ROW_TERM_BYTE {
             return Ok(None);
         }
 
