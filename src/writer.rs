@@ -1,9 +1,9 @@
 use std::{fs::File, io::{BufWriter, Write}, path::Path};
+use crate::utils::{NULL_BYTE, ROW_TERM_BYTE, VALUE_TERM_BYTE};
+// #[cfg(features = "serde")]
+use serde::Serialize;
 
-#[cfg(features = "serde")]
-use serde::{ser::{SerializeMap, SerializeSeq, SerializeStruct, SerializeStructVariant, SerializeTuple, SerializeTupleStruct, SerializeTupleVariant}, Serialize, Serializer};
-
-#[cfg(features = "serde")]
+// #[cfg(features = "serde")]
 use crate::serializer::SerRecord;
 
 use crate::error::Error;
@@ -15,18 +15,23 @@ pub struct Writer<W> where W: Write {
 impl Writer<BufWriter<File>> {
     pub fn from_path<P: AsRef<Path>>(path: P) -> Result<Writer<BufWriter<File>>, Error> {
         let f = File::create(path)?;
-        let wtr = BufWriter::new(f);
 
-        Ok(Writer::from_writer(wtr))
+        Ok(Writer::from_writer(f))
+    }
+}
+
+impl<W: Write> Writer<BufWriter<W>> {
+    pub fn from_writer(wtr: W) -> Writer<BufWriter<W>> {
+        let wtr = BufWriter::new(wtr);
+        Writer {
+            wtr,
+        }
     }
 }
 
 impl<W: Write> Writer<W> {
-    const NULL_BYTE: u8 = 0xFE;
-    const ROW_TERM_BYTE: u8 = 0xFD;
-    const VALUE_TERM_BYTE: u8 = 0xFF;
 
-    pub fn from_writer(wtr: W) -> Self {
+    pub fn from_writer_unbuffered(wtr: W) -> Self {
         Writer {
             wtr,
         }
@@ -64,21 +69,21 @@ impl<W: Write> Writer<W> {
 
     pub(crate) fn write_value<T: AsRef<[u8]>>(&mut self, value: T) -> Result<(), Error> {
         self.wtr.write_all(value.as_ref())?;
-        self.wtr.write_all(&[Self::VALUE_TERM_BYTE])?;
+        self.wtr.write_all(&[VALUE_TERM_BYTE])?;
 
         Ok(())
     }
 
     pub(crate) fn write_null(&mut self) -> Result<(), Error> {
-        self.write_value(&[Self::NULL_BYTE])
+        self.write_value(&[NULL_BYTE])
     }
 
     pub(crate) fn write_row_term(&mut self) -> Result<(), Error> {
-        self.wtr.write_all(&[Self::ROW_TERM_BYTE])?;
+        self.wtr.write_all(&[ROW_TERM_BYTE])?;
         Ok(())
     }
 
-    #[cfg(features = "serde")]
+    // #[cfg(features = "serde")]
     pub fn serialize<S: Serialize>(&mut self, record: S) -> Result<(), Error> {
         record.serialize(&mut SerRecord { wtr: self })?;
         self.write_row_term()?;

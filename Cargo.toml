@@ -11,15 +11,10 @@ readme = "README.md"
 keywords = ["rsv", "parser", "serde"]
 license = "MIT"
 categories = ["encoding", "parser-implementations"]
-exclude = ["/.github"]
 
-[library]
 
 [dependencies]
 serde = { version = "1.0.195", features = ["derive"], optional = true }
-
-[dev-dependencies]
-serde = { version = "1.0.195", features = ["derive"] }
 
 [features]
 serde = ["dep:serde"]

@@ -1,7 +1,7 @@
-mod error;
-mod writer;
+pub mod error;
+pub mod writer;
+pub mod reader;
 
-#[cfg(features = "serde")]
 mod deserializer;
-#[cfg(features = "serde")]
 mod serializer;
+mod utils;
