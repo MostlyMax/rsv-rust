@@ -3,10 +3,10 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct ExampleStruct {
-    a: i32,
-    b: String,
-    c: Option<String>,
-    d: Option<u64>
+    _a: i32,
+    _b: String,
+    _c: Option<String>,
+    _d: Option<u64>
 }
 
 fn main() {
