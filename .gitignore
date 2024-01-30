@@ -1,4 +1,7 @@
 /target
 test*
 
+# files from examples
+basic-serde-example.bin
+
 .vscode
