@@ -2,6 +2,6 @@
 test*
 
 # files from examples
-basic-serde-example.bin
+*-example.bin
 
 .vscode
