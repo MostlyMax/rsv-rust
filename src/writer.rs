@@ -11,6 +11,7 @@ pub struct Writer<W> where W: Write {
 }
 
 impl Writer<BufWriter<File>> {
+    /// Creates a new buffered writer from a file path.
     pub fn from_path<P: AsRef<Path>>(path: P) -> Result<Writer<BufWriter<File>>, Error> {
         let f = File::create(path)?;
 
@@ -19,6 +20,7 @@ impl Writer<BufWriter<File>> {
 }
 
 impl<W: Write> Writer<BufWriter<W>> {
+    /// Creates a new buffered writer from a struct that implements the Write trait.
     pub fn from_writer(wtr: W) -> Writer<BufWriter<W>> {
         let wtr = BufWriter::new(wtr);
         Writer {
@@ -28,7 +30,7 @@ impl<W: Write> Writer<BufWriter<W>> {
 }
 
 impl<W: Write> Writer<W> {
-
+    /// Creates a new *unbuffered* writer from a struct that implements the Write trait.
     pub fn from_writer_unbuffered(wtr: W) -> Self {
         Writer {
             wtr,
@@ -50,6 +52,7 @@ impl<W: Write> Writer<W> {
     //     }
     // }
 
+    /// Encode an iterable struct of items into a single record.
     pub fn write_record<'r, I, T>(&mut self, rec: I) -> Result<(), Error>
         where I: IntoIterator<Item = &'r Option<T>>, T: AsRef<[u8]> + 'r {
 

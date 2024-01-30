@@ -11,6 +11,7 @@ pub struct Reader<R: Read> {
 }
 
 impl<R: Read> Reader<R> {
+    /// Creates a new buffered reader from any struct that implements the Read trait.
     pub fn from_reader(rdr: R) -> Reader<R> {
         let rdr = BufReader::new(rdr);
         Reader {
@@ -20,6 +21,7 @@ impl<R: Read> Reader<R> {
 }
 
 impl Reader<File> {
+    /// Creates a new buffered reader from a file path.
     pub fn from_path<P: AsRef<Path>>(path: P) -> Result<Reader<File>, Error> {
         let f = File::open(path)?;
 
@@ -28,6 +30,7 @@ impl Reader<File> {
 }
 
 impl<'a, R: Read> Reader<R> {
+    /// Returns an iterator that will continuously decode records from the underlying reader.
     pub fn deserialize<'de, D: DeserializeOwned>(&mut self) -> DesRecordIter<'_, D, R> {
 
         DesRecordIter::<D, R> {
