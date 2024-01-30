@@ -15,3 +15,9 @@ categories = ["encoding", "parser-implementations"]
 
 [dependencies]
 serde = { version = "1.0.195", features = ["derive"] }
+
+[dev-dependencies]
+zstd = "0.13.0"
+
+[[example]]
+name="with-compression"
