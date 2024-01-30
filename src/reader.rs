@@ -1,6 +1,9 @@
 use std::{fs::File, io::{BufRead, BufReader, Read}, marker::PhantomData, path::Path};
+
 use serde::de::DeserializeOwned;
-use crate::{deserializer::DeRecord, error::{Error, ErrorKind}};
+use crate::deserializer::DeRecord;
+
+use crate::error::{ErrorKind, Error};
 use crate::utils::ROW_TERM_BYTE;
 
 pub struct Reader<R: Read> {

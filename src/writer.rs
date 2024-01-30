@@ -1,9 +1,7 @@
 use std::{fs::File, io::{BufWriter, Write}, path::Path};
 use crate::utils::{NULL_BYTE, ROW_TERM_BYTE, VALUE_TERM_BYTE};
-// #[cfg(features = "serde")]
-use serde::Serialize;
 
-// #[cfg(features = "serde")]
+use serde::Serialize;
 use crate::serializer::SerRecord;
 
 use crate::error::Error;
@@ -83,7 +81,6 @@ impl<W: Write> Writer<W> {
         Ok(())
     }
 
-    // #[cfg(features = "serde")]
     pub fn serialize<S: Serialize>(&mut self, record: S) -> Result<(), Error> {
         record.serialize(&mut SerRecord { wtr: self })?;
         self.write_row_term()?;
