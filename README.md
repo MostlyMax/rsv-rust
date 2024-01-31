@@ -11,8 +11,8 @@ find the specification created by Stenway [here](https://github.com/Stenway/RSV-
 ### example
 
 ```rust
-use rsv::reader::Reader;
-use rsv::writer::Writer;
+use rsv_core::reader::Reader;
+use rsv_core::writer::Writer;
 use serde::{Deserialize, Serialize};
 
 
