@@ -52,7 +52,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsv-rust"
+name = "rsv-core"
 version = "0.0.2"
 dependencies = [
  "serde",

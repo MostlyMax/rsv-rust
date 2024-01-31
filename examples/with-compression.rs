@@ -1,7 +1,7 @@
 use std::fs::File;
 
-use rsv::reader::Reader;
-use rsv::writer::Writer;
+use rsv_core::reader::Reader;
+use rsv_core::writer::Writer;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]

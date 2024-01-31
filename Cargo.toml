@@ -1,5 +1,5 @@
 [package]
-name = "rsv-rust"
+name = "rsv-core"
 version = "0.0.2"
 edition = "2021"
 authors = ["Maxi Saparov <max.saparov@gmail.com>"]
