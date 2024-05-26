@@ -72,6 +72,20 @@ impl<'de> DeRecord<'de> {
 
         Ok(value)
     }
+
+    // Look at the first character in the input without consuming it.
+    fn peek_char(&mut self) -> Result<u8, Error> {
+        self.buf.iter().next().ok_or(Error(ErrorKind::Deserialize(
+            "Got None but expected char".to_owned()
+        ))).copied()
+    }
+
+    // Consume the first character in the input.
+    fn next_char(&mut self) -> Result<u8, Error> {
+        let ch = self.peek_char()?;
+        self.buf = &self.buf[1..];
+        Ok(ch)
+    }
 }
 
 impl<'a, 'de> Deserializer<'de> for &'a mut DeRecord<'de> {
@@ -261,7 +275,16 @@ impl<'a, 'de> Deserializer<'de> for &'a mut DeRecord<'de> {
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de> {
-        todo!()
+        // Parse the row terminator.
+        if self.next_char()? == ROW_TERM_BYTE {
+            // Give the visitor access to each element of the sequence.
+            let value = visitor.visit_seq(self)?;
+            Ok(value)
+        } else {
+            Err(Error(ErrorKind::Deserialize(
+                "Unable to find ROW_TERM_BYTE in row".to_owned()
+            )))
+        }
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
@@ -348,7 +371,7 @@ impl<'a, 'de> SeqAccess<'de> for DeRecord<'de> {
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
         T: serde::de::DeserializeSeed<'de> {
-        if self.buf[0] == ROW_TERM_BYTE {
+        if self.buf.len() == 0 || self.buf[0] == ROW_TERM_BYTE {
             return Ok(None);
         }
 
