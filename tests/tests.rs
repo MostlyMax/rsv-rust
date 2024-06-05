@@ -82,12 +82,14 @@ fn seq_deserialization() {
     assert!(row_count == 3);
 
     // 2 rows with null values
-    /* let buffer: Vec<u8> = vec![NULL_BYTE, VALUE_TERM_BYTE, ROW_TERM_BYTE, NULL_BYTE, VALUE_TERM_BYTE, ROW_TERM_BYTE];
+    let buffer: Vec<u8> = vec![NULL_BYTE, VALUE_TERM_BYTE, ROW_TERM_BYTE, NULL_BYTE, VALUE_TERM_BYTE, ROW_TERM_BYTE];
     let mut row_count = 0;
-    for result in reader::Reader::from_reader(&*buffer).deserialize::<Vec<NoValue>>() {
+    for result in reader::Reader::from_reader(&*buffer).deserialize::<Vec<Option<String>>>() {
         assert!(result.is_ok());
-        assert!(result.unwrap().len() == 1);
+        let row = result.unwrap();
+        assert!(row.len() == 1);
+        assert!(row[0].is_none());
         row_count += 1;
     }
-    assert!(row_count == 2); */
+    assert!(row_count == 2);
 }
