@@ -1,6 +1,6 @@
 [package]
 name = "rsv-core"
-version = "0.0.3"
+version = "0.0.4"
 edition = "2021"
 authors = ["Maxi Saparov <max.saparov@gmail.com>"]
 description = "RSV reading and writing with Serde support"
